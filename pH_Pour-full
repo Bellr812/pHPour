@@ -1,0 +1,68 @@
+/*pH Pour by Rachel Bell
+A program that simulates the visable effects of pH scale*/
+
+int led1 = 6, led2 = 9, led3 = 10, led4 = 11; // variables to hold the pin numbers for outputs
+int tiltSensor = 5; // a variable to hold the pin number for the input
+int userChoice = 5; // a variable to hold the aqueous solution of the user's choice, default is 5an arbitrary number
+int brightness = 0; // a variable to hold an integer that corrasponds to how bight the LED is
+int fadeAmount = 5; // a variable that holds the amount by which the LED brightens
+char* solutions[] = {"Ammonia is a base, its pH is 11.5.","Battery Acid is an acid, its pH is 1.0.","Water is neutral, its pH is 7.0."};
+
+void setup() {
+ // Set LEDs as outputs and the tilt switch as an input
+pinMode(led1,OUTPUT);
+pinMode(led2,OUTPUT);
+pinMode(led3,OUTPUT);
+pinMode(led4,OUTPUT);
+pinMode(tiltSensor,INPUT);
+
+// Turns on the LEDs for the universal pH indicator. 
+digitalWrite(led1, HIGH);
+
+// Open the serial port at 9600 bps:
+Serial.begin(9600);
+// Display pH explanation
+Serial.println("\npH is a scale used to measure the acidity of basicity of an aqueous solution. A universal pH indicator changes the color of the solution. This color change corresponds to a descreet range of pH values that indicate whether the solution is an acid or a base.");
+
+// While user's choice is not equal to 0, 1,or 2, prompt user for 0, 1, or 2.
+while(userChoice!=0||userChoice!=1||userChoice!=2){
+Serial.println("\nChoose the solution you would like to test the pH of. \nEnter an number, 0-2. \n0 = Ammonia\n1 = Battery acid\n2 = Water\n");
+  // If input is available assin it to userChoice variable.
+  if (Serial.available() > 0) {
+    // read the incoming byte:
+    userChoice = Serial.read();
+  }
+}
+
+// Display user’s choice of solution and its pH value to screen.
+Serial.println(solutions[userChoice]);
+
+// Prompt user to pour the universal pH indicator.
+Serial.println("\nPlease pour the universal pH indicator into the solution.(It's the purple liquid.)");
+}
+
+void loop() {
+
+// If tilt sensor is horizontal
+if (digitalRead(tiltSensor) == LOW){
+
+  // Turn on LED(s) corrasponding to pH value of the user's chosen solution.
+switch (userChoice) {
+    case 0:
+      analogWrite(led2, brightness);
+      break;
+    case 1:
+      analogWrite(led4, brightness);
+      break;
+    case 2:
+      analogWrite(led2, brightness);
+      analogWrite(led3, brightness);
+      break;
+  }
+
+//Increase intensity for next loop
+brightness = brightness + fadeAmount;
+// Delay program continuation for 30 milliseconds to allow user to see change.
+delay(30);
+}
+}
